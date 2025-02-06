@@ -1,2 +1,89 @@
-# Number-Classification-APII
+# Number-Classification-API
 This is an API that takes a number and returns interesting mathematical properties about it, along with a fun fact. It is part of HNG12 Internship
+
+## Features
+- **Interesting Mathematical Properties**
+    - **Prime Number Check**
+    - **Perfect Number Check**
+    - **Armstrong Number Check**
+    - **Digit Sum Calculation**
+    - **Parity ("even" or "odd") Check**
+- **Fun Fact**: Returns a fun fact from [NUMBERSAPI](http://numbersapi.com/#42)
+- **CORS enabled** for cross-origin requests
+-  **HTTP Status Codes**
+-  **JSON Responses**
+
+## Technology stack
+- **Programming Language:** Python
+-  **Framework:** Flask
+-  **Deployment:** AWS
+-   **Version Control:** Git
+   
+## API Specification
+**Endpoint**
+- **GET** <your-url>/api/classify-number?number=371
+## Response (200 OK)
+```
+{
+  "number": 371,
+  "is_prime": false,
+  "is_perfect": false,
+  "properties": ["armstrong", "odd"],
+  "class_sum": 11,
+  "fun_fact": "371 is an Armstrong number because 3^3 + 7^3 + 1^3 = 371"
+}
+```
+## Response (400 Bad Request)
+```
+{
+    "number": "alphabet",
+    "error": true
+}
+```
+
+## Setup and Installation
+- **launch an ec2 instance in AWS**
+- **Allow port 5000 from anywhere for python Flask API**
+- **ssh into your instance**
+- **Install Python and its dependencies**
+```
+sudo apt update 
+sudo apt install python3 python3-pip -y
+```
+
+- **Verify the installation of Python and Pip**
+```
+python3 --version
+pip3 --version
+```
+
+- **Clone and change directory into the Project from GitHub into EC2**
+```
+git clone https://github.com/Opeoluwachosen/Number-Classification-API.git
+cd Number-Classification-API
+```
+
+- **Set Up a Virtual Environment and Install Dependencies in a directory**
+```
+# install python3 virtual environment  
+sudo apt install python3-venv -y
+
+# create a virtual environment  
+python3 -m venv myenv
+
+# Activate the virtual environment  
+source myenv/bin/activate
+
+# Install required dependencies  
+pip install -r requirements.txt
+```
+
+- **Verify Installation**
+```
+pip list 
+```
+- **Run the Flask API**
+```
+python app.py
+```
+
