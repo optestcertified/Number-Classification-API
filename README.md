@@ -59,7 +59,7 @@ pip3 --version
 
 - **Clone and change directory into the Project from GitHub into EC2**
 ```
-git clone https://github.com/Opeoluwachosen/Number-Classification-API.git
+git clone https://github.com/optestcertified/Number-Classification-API.git
 cd Number-Classification-API
 ```
 
