@@ -6,38 +6,46 @@ import math
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Check if a number is prime
+# Check if a number is prime (only valid for integers)
 def is_prime(n):
-    if n < 2:
+    if n < 2 or not n.is_integer():
         return False
+    n = int(n)
     for i in range(2, int(math.sqrt(n)) + 1):
         if n % i == 0:
             return False
     return True
 
-# Check if a number is perfect
+# Check if a number is perfect (only valid for positive integers)
 def is_perfect(n):
-    if n < 2:
+    if n < 2 or not n.is_integer():
         return False
+    n = int(n)
     return sum(i for i in range(1, n) if n % i == 0) == n
 
-# Check if a number is an Armstrong number
+# Check if a number is an Armstrong number (only valid for integers)
 def is_armstrong(n):
-    num_str = str(n)
+    if not n.is_integer():
+        return False
+    num_str = str(int(n))
     num_digits = len(num_str)
-    return sum(int(digit) ** num_digits for digit in num_str) == n
+    return sum(int(digit) ** num_digits for digit in num_str) == int(n)
 
-# Check parity (even/odd)
+# Check parity (even/odd, only for integers)
 def get_parity(n):
-    return "even" if n % 2 == 0 else "odd"
+    return "even" if n.is_integer() and int(n) % 2 == 0 else "odd"
 
-# Calculate digit sum
+# Calculate digit sum (only for integers)
 def digit_sum(n):
-    return sum(int(digit) for digit in str(n))
+    if not n.is_integer():
+        return None  # Digit sum is undefined for floating-point numbers
+    return sum(int(digit) for digit in str(abs(int(n))))  # Handle negatives properly
 
 # Fetch a fun fact about the number
 def get_fun_fact(n):
-    url = f"http://numbersapi.com/{n}/math"
+    if not n.is_integer():
+        return "Fun facts are only available for whole numbers."
+    url = f"http://numbersapi.com/{int(n)}/math"
     try:
         response = requests.get(url, timeout=2)
         if response.status_code == 200:
@@ -56,13 +64,13 @@ def get_properties(n):
 # API Endpoint
 @app.route("/api/classify-number", methods=['GET'])
 def classify_number():
-    number_str = request.args.get("number")  # Fixed query parameter name
+    number_str = request.args.get("number")
 
-    # Validate input: Ensure it's a valid integer
-    if number_str is None or not number_str.lstrip('-').isdigit():
-        return jsonify({"number": "alphabet", "error": True}), 400
-
-    number = int(number_str)
+    # Validate input: Ensure it's a valid number (integer or float)
+    try:
+        number = float(number_str)
+    except (TypeError, ValueError):
+        return jsonify({"number": "invalid", "error": True}), 400
 
     response = {
         "number": number,
@@ -75,14 +83,15 @@ def classify_number():
 
     # Override fun fact if Armstrong number
     if is_armstrong(number):
-        digits = [int(d) for d in str(number)]
+        digits = [int(d) for d in str(int(number))]
         length = len(digits)
-        calculation = " + ".join(f"{d}^{length}" for d in digits) + f" = {number}"
-        response["fun_fact"] = f"{number} is an Armstrong number because {calculation}"
+        calculation = " + ".join(f"{d}^{length}" for d in digits) + f" = {int(number)}"
+        response["fun_fact"] = f"{int(number)} is an Armstrong number because {calculation}"
 
-    return jsonify(response), 200
+    return jsonify(response), 200  # Ensuring all valid numbers return 200
 
 # Run the app
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
