@@ -70,7 +70,7 @@ def classify_number():
     try:
         number = float(number_str)
     except (TypeError, ValueError):
-        return jsonify({"number": "invalid", "error": True}), 400
+        return jsonify({"number": "alphabet", "error": True}), 400
 
     response = {
         "number": number,
