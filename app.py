@@ -25,9 +25,9 @@ def is_perfect(n):
 def is_armstrong(n):
     if n < 0:
         return False  # Armstrong numbers are only for non-negative integers
-    num_str = str(n)
+    num_str = str(int(n))  # Convert to integer for processing
     num_digits = len(num_str)
-    return sum(int(digit) ** num_digits for digit in num_str) == n
+    return sum(int(digit) ** num_digits for digit in num_str) == int(n)
 
 # Check parity (even/odd)
 def get_parity(n):
@@ -35,7 +35,7 @@ def get_parity(n):
 
 # Calculate digit sum
 def digit_sum(n):
-    return sum(int(digit) for digit in str(abs(n)))  # Handle negatives properly
+    return sum(int(digit) for digit in str(abs(int(n))))  # Handle negatives properly
 
 # Fetch a fun fact about the number
 def get_fun_fact(n):
@@ -60,11 +60,15 @@ def get_properties(n):
 def classify_number():
     number_str = request.args.get("number")
 
-    # Validate input: Ensure it's a valid integer
-    if number_str is None or not number_str.lstrip('-').isdigit():
+    # Validate input: Ensure it's a valid number (integer or float)
+    try:
+        number = float(number_str)  # Convert to float first
+        if number.is_integer():
+            number = int(number)  # Convert to integer if it's a whole number
+        else:
+            return jsonify({"number": "invalid", "error": True}), 400  # Reject non-integer floats
+    except (ValueError, TypeError):
         return jsonify({"number": "alphabet", "error": True}), 400
-
-    number = int(number_str)
 
     response = {
         "number": number,
@@ -77,7 +81,7 @@ def classify_number():
 
     # Override fun fact if Armstrong number
     if is_armstrong(number):
-        digits = [int(d) for d in str(abs(number))]
+        digits = [int(d) for d in str(abs(int(number)))]
         length = len(digits)
         calculation = " + ".join(f"{d}^{length}" for d in digits) + f" = {number}"
         response["fun_fact"] = f"{number} is an Armstrong number because {calculation}"
@@ -88,4 +92,8 @@ def classify_number():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
 
+
+
+
+ 
 
